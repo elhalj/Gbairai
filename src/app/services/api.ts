@@ -1,11 +1,10 @@
-import { projectId, publicAnonKey } from '/utils/supabase/info';
+import { publicAnonKey } from '../../../utils/supabase/info';
 import { Post } from '../types';
 
-const API_URL = `https://${projectId}.supabase.co/functions/v1/make-server-462e692b`;
+const API_URL = `http://localhost:3000/make-server-462e692b`;
 
 async function fetchAPI(endpoint: string, options?: RequestInit) {
   const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
     headers: {
       'Authorization': `Bearer ${publicAnonKey}`,
       'Content-Type': 'application/json',

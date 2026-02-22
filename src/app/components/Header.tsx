@@ -38,8 +38,8 @@ export function Header({ onMenuClick }: HeaderProps) {
             <Menu className="size-5" />
           </Button>
           <Link to="/" className="flex items-center gap-2">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg px-3 py-2">
-              <span className="text-white font-bold text-xl">gbairai</span>
+            <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg px-3 py-2">
+              <img src="/src/app/assets/logo.webp" alt="gbairai" className="size-10" />
             </div>
           </Link>
         </div>

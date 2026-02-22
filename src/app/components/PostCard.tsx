@@ -79,6 +79,7 @@ export function PostCard({ post }: PostCardProps) {
             </div>
             <button className="flex items-center gap-1 text-gray-600 hover:text-green-600 transition-colors ml-auto">
               <Share2 className="size-4" />
+              <span className="sr-only">Partager</span>
             </button>
           </div>
         </div>

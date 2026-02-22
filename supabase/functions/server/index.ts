@@ -1,8 +1,8 @@
-import { Hono } from 'npm:hono';
-import { cors } from 'npm:hono/cors';
-import { logger } from 'npm:hono/logger';
-import { createClient } from 'npm:@supabase/supabase-js@2';
-import * as kv from './kv_store.tsx';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import { createClient } from '@supabase/supabase-js';
+import * as kv from './kv_store';
 
 const app = new Hono();
 
@@ -12,8 +12,8 @@ app.use('*', logger(console.log));
 
 // Initialiser Supabase
 const supabase = createClient(
-  Deno.env.get('SUPABASE_URL')!,
-  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 // Créer le bucket pour les images au démarrage
@@ -256,4 +256,4 @@ app.post('/make-server-462e692b/posts/:id/view', async (c) => {
   }
 });
 
-Deno.serve(app.fetch);
+export { app };
