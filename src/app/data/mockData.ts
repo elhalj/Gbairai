@@ -28,7 +28,7 @@ export const mockPosts: Post[] = [
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Fatou'
     },
     image: 'https://images.unsplash.com/photo-1768885510527-a11bcf2aa7ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21tdW5pdHklMjBtZWV0aW5nJTIwcGVvcGxlfGVufDF8fHx8MTc3MTc3NjczOXww&ixlib=rb-4.1.0&q=80&w=1080',
-    createdAt: new Date('2026-02-22T08:15:00'),
+    createdAt: new Date('2026-02-22T10:15:00'),
     likes: 189,
     comments: 32,
     views: 876

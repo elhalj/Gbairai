@@ -17,6 +17,8 @@ export function Header({ onMenuClick }: HeaderProps) {
     const success = await seedDatabase();
     if (success) {
       toast.success('Données de démo chargées !');
+      // Émettre un événement personnalisé pour notifier le composant Home
+      window.dispatchEvent(new CustomEvent('demoDataLoaded'));
       setTimeout(() => window.location.reload(), 1000);
     } else {
       toast.error('Erreur lors du chargement des données');

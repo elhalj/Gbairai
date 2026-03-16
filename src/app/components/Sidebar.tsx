@@ -38,10 +38,10 @@ export function Sidebar({ className }: SidebarProps) {
                   : 'text-gray-700 hover:bg-gray-50'
               )}
             >
-              {Icon ? (
-                <Icon className="size-5" />
-              ) : (
+              {category.emoji ? (
                 <span className="text-xl">{category.icon}</span>
+              ) : (
+                <Icon className="size-5" />
               )}
               <span>{category.label}</span>
             </Link>
