@@ -1,36 +1,26 @@
-import { publicAnonKey } from '../../../utils/supabase/info';
-import { Post } from '../types';
+import { Post } from "../types";
+import supabase from "./utils/supabase/info";
 
-const API_URL = `http://localhost:3000/make-server-462e692b`;
 
-async function fetchAPI(endpoint: string, options?: RequestInit) {
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    headers: {
-      'Authorization': `Bearer ${publicAnonKey}`,
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Network error' }));
-    throw new Error(error.error || 'API request failed');
-  }
-
-  return response.json();
-}
 
 export const api = {
   // Posts
   async getAllPosts(): Promise<Post[]> {
-    const data = await fetchAPI('/posts');
-    return data.posts || [];
+    const {data} = await supabase.from("posts").select();
+    return (data || []).map(post => ({
+      ...post,
+      createdAt: post.created_at
+    }));
   },
 
   async getPost(id: string): Promise<Post | null> {
     try {
-      const data = await fetchAPI(`/posts/${id}`);
-      return data.post;
+      const {data, error} = await supabase.from("posts").select("*").eq("id", id).single();
+      if (error) throw error;
+      return data ? {
+        ...data,
+        createdAt: data.created_at
+      } : null;
     } catch (error) {
       console.error('Error fetching post:', error);
       return null;
@@ -38,8 +28,11 @@ export const api = {
   },
 
   async getPostsByCategory(category: string): Promise<Post[]> {
-    const data = await fetchAPI(`/posts/category/${category}`);
-    return data.posts || [];
+    const {data} = await supabase.from("posts").select("*").eq("category", category);
+    return (data || []).map(post => ({
+      ...post,
+      createdAt: post.created_at
+    }));
   },
 
   async createPost(post: {
@@ -49,38 +42,62 @@ export const api = {
     authorName: string;
     image?: string;
   }): Promise<Post> {
-    const data = await fetchAPI('/posts', {
-      method: 'POST',
-      body: JSON.stringify(post),
-    });
-    return data.post;
+    const {data, error} = await supabase.from("posts").insert([{
+      title: post.title,
+      content: post.content,
+      category: post.category,
+      author: { name: post.authorName, avatar: '' },
+      image: post.image,
+      excerpt: post.content.substring(0, 150) + '...',
+      likes: 0,
+      comments: 0,
+      views: 0,
+      created_at: new Date()
+    }]).select().single();
+    
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create post: No data returned');
+    return {
+      ...data,
+      createdAt: data.created_at
+    };
   },
 
   async likePost(postId: string, userId: string): Promise<Post> {
-    const data = await fetchAPI(`/posts/${postId}/like`, {
-      method: 'POST',
-      body: JSON.stringify({ userId }),
-    });
-    return data.post;
+    const {error} = await supabase.rpc('increment_likes', { post_id: postId });
+    if (error) throw error;
+    
+    const {data: updatedPost} = await supabase.from("posts").select("*").eq("id", postId).single();
+    if (!updatedPost) throw new Error('Failed to update post: No data returned');
+    return {
+      ...updatedPost,
+      createdAt: updatedPost.created_at
+    };
   },
 
   async incrementViews(postId: string): Promise<void> {
-    await fetchAPI(`/posts/${postId}/view`, {
-      method: 'POST',
-    });
+    const {error} = await supabase.rpc('increment_views', { post_id: postId });
+    if (error) throw error;
   },
 
   // Comments
   async getComments(postId: string): Promise<any[]> {
-    const data = await fetchAPI(`/posts/${postId}/comments`);
-    return data.comments || [];
+    const {data} = await supabase.from("comments").select("*").eq("post_id", postId);
+    return data || [];
   },
 
   async addComment(postId: string, content: string, authorName: string): Promise<any> {
-    const data = await fetchAPI(`/posts/${postId}/comments`, {
-      method: 'POST',
-      body: JSON.stringify({ content, authorName }),
-    });
-    return data.comment;
+    const {data, error} = await supabase.from("comments").insert([{
+      post_id: postId,
+      content,
+      author_name: authorName,
+      created_at: new Date()
+    }]).select().single();
+    
+    if (error) throw error;
+    return data ? {
+      ...data,
+      createdAt: data.created_at
+    } : null;
   },
 };

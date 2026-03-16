@@ -3,8 +3,6 @@ import { Heart, MessageCircle, Eye, Share2 } from 'lucide-react';
 import { Post } from '../types';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 interface PostCardProps {
   post: Post;
@@ -24,7 +22,7 @@ export function PostCard({ post }: PostCardProps) {
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <Link to={`/post/${post.id}`}>
         {post.image && (
-          <div className="aspect-[16/9] overflow-hidden bg-gray-100">
+          <div className="aspect-[16/9] sm:aspect-[16/9] overflow-hidden bg-gray-100">
             <img
               src={post.image}
               alt={post.title}
@@ -32,19 +30,19 @@ export function PostCard({ post }: PostCardProps) {
             />
           </div>
         )}
-        <div className="p-4 space-y-3">
+        <div className="p-3 sm:p-4 space-y-3">
           {/* Catégorie et date */}
-          <div className="flex items-center justify-between">
-            <Badge className={categoryColors[post.category]}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <Badge className={categoryColors[post.category] + " w-fit"}>
               {post.category}
             </Badge>
             <span className="text-xs text-gray-500">
-              {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: fr })}
+              {new Date(post.createdAt).toLocaleDateString()}
             </span>
           </div>
 
           {/* Titre */}
-          <h2 className="font-semibold text-lg line-clamp-2 text-gray-900">
+          <h2 className="font-semibold text-base sm:text-lg line-clamp-2 text-gray-900">
             {post.title}
           </h2>
 
@@ -64,18 +62,18 @@ export function PostCard({ post }: PostCardProps) {
           </div>
 
           {/* Stats */}
-          <div className="flex items-center gap-4 pt-2 border-t border-gray-100">
+          <div className="flex items-center gap-3 sm:gap-4 pt-2 border-t border-gray-100 flex-wrap">
             <button className="flex items-center gap-1 text-gray-600 hover:text-red-600 transition-colors">
               <Heart className="size-4" />
-              <span className="text-sm">{post.likes}</span>
+              <span className="text-xs sm:text-sm">{(post.likes).toLocaleString()}</span>
             </button>
             <button className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors">
               <MessageCircle className="size-4" />
-              <span className="text-sm">{post.comments}</span>
+              <span className="text-xs sm:text-sm">{(post.comments).toLocaleString()}</span>
             </button>
             <div className="flex items-center gap-1 text-gray-600">
               <Eye className="size-4" />
-              <span className="text-sm">{post.views}</span>
+              <span className="text-xs sm:text-sm">{(post.views).toLocaleString()}</span>
             </div>
             <button className="flex items-center gap-1 text-gray-600 hover:text-green-600 transition-colors ml-auto">
               <Share2 className="size-4" />

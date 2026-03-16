@@ -14,6 +14,19 @@ import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 
 export function PostDetail() {
+  const avatars = [
+          "👩🏻‍🎤",
+          "👨🏻‍🎤",
+          "👱‍♀️",
+          "🦸‍♀️",
+          "🧝‍♀️",
+          "🧝‍♂️",
+          "🤖",
+          "🧑‍🎤",
+          "👩‍🎤",
+          "👨‍🎤",
+  ];
+  const avatarRandom = avatars[Math.floor(Math.random() * avatars.length)]
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<any[]>([]);
@@ -120,14 +133,16 @@ export function PostDetail() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
       {/* Bouton retour */}
-      <Link to="/">
-        <Button variant="ghost" size="sm" className="mb-4">
-          <ArrowLeft className="size-4 mr-2" />
-          Retour
-        </Button>
-      </Link>
+      <div className="mb-4">
+        <Link to="/">
+          <Button variant="ghost" size="sm" className="text-sm">
+            <ArrowLeft className="size-4 mr-2" />
+            Retour
+          </Button>
+        </Link>
+      </div>
 
       {/* Article */}
       <article className="bg-white rounded-lg overflow-hidden">
@@ -142,10 +157,10 @@ export function PostDetail() {
           </div>
         )}
 
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4">
           {/* Catégorie et date */}
-          <div className="flex items-center gap-3">
-            <Badge className={categoryColors[post.category]}>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <Badge className={categoryColors[post.category] + " w-fit"}>
               {post.category}
             </Badge>
             <span className="text-sm text-gray-500">
@@ -154,17 +169,13 @@ export function PostDetail() {
           </div>
 
           {/* Titre */}
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
             {post.title}
           </h1>
 
           {/* Auteur */}
           <div className="flex items-center gap-3 py-4 border-y border-gray-200">
-            <img
-              src={post.author.avatar}
-              alt={post.author.name}
-              className="size-12 rounded-full"
-            />
+            <div className='rounded-full text-2xl sm:text-3xl'>{ avatarRandom}</div>
             <div>
               <div className="font-medium text-gray-900">{post.author.name}</div>
               <div className="text-sm text-gray-500">Journaliste citoyen</div>
@@ -179,25 +190,27 @@ export function PostDetail() {
           </div>
 
           {/* Stats et actions */}
-          <div className="flex items-center gap-6 pt-6 border-t border-gray-200">
-            <button 
-              onClick={handleLike}
-              className={`flex items-center gap-2 transition-colors ${
-                liked ? 'text-red-600' : 'text-gray-600 hover:text-red-600'
-              }`}
-            >
-              <Heart className={`size-5 ${liked ? 'fill-current' : ''}`} />
-              <span>{post.likes}</span>
-            </button>
-            <div className="flex items-center gap-2 text-gray-600">
-              <MessageCircle className="size-5" />
-              <span>{post.comments}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pt-6 border-t border-gray-200">
+            <div className="flex flex-wrap gap-4">
+              <button 
+                onClick={handleLike}
+                className={`flex items-center gap-2 transition-colors ${
+                  liked ? 'text-red-600' : 'text-gray-600 hover:text-red-600'
+                }`}
+              >
+                <Heart className={`size-5 ${liked ? 'text-red-600' : ''}`} />
+                <span>{post.likes}</span>
+              </button>
+              <div className="flex items-center gap-2 text-gray-600">
+                <MessageCircle className="size-5" />
+                <span>{post.comments}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <Eye className="size-5" />
+                <span>{post.views}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Eye className="size-5" />
-              <span>{post.views}</span>
-            </div>
-            <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors ml-auto">
+            <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors sm:ml-auto">
               <Share2 className="size-5" />
               <span>Partager</span>
             </button>
@@ -206,7 +219,7 @@ export function PostDetail() {
       </article>
 
       {/* Section commentaires */}
-      <Card className="mt-6 p-6">
+      <Card className="mt-6 p-4 sm:p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">
           Commentaires ({post.comments})
         </h2>
@@ -214,24 +227,29 @@ export function PostDetail() {
         {/* Formulaire de commentaire */}
         <form onSubmit={handleCommentSubmit} className="space-y-3 mb-6">
           <div>
-            <Label htmlFor="commentAuthor">Votre nom</Label>
+            <Label htmlFor="commentAuthor" className="text-sm font-medium">Votre nom</Label>
             <Input
               id="commentAuthor"
               value={commentAuthor}
               onChange={(e) => setCommentAuthor(e.target.value)}
               placeholder="Votre nom..."
+              className="mt-1"
               required
             />
           </div>
-          <Textarea
-            value={commentContent}
-            onChange={(e) => setCommentContent(e.target.value)}
-            placeholder="Ajouter un commentaire..."
-            className="min-h-24"
-            required
-          />
+          <div>
+            <Label htmlFor="commentContent" className="text-sm font-medium">Commentaire</Label>
+            <Textarea
+              id="commentContent"
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              placeholder="Ajouter un commentaire..."
+              className="mt-1 min-h-24"
+              required
+            />
+          </div>
           <div className="flex justify-end">
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
               {submitting ? (
                 <>
                   <Loader2 className="size-4 mr-2 animate-spin" />
@@ -250,16 +268,16 @@ export function PostDetail() {
             comments.map((comment) => (
               <div key={comment.id} className="border-b border-gray-100 pb-4">
                 <div className="flex items-start gap-3">
-                  <img
-                    src={comment.author.avatar}
-                    alt={comment.author.name}
-                    className="size-10 rounded-full"
-                  />
+                  <div className="size-10 rounded-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-600 font-medium">
+                      {comment.author_name?.charAt(0)?.toUpperCase() || 'A'}
+                    </span>
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">{comment.author.name}</span>
+                      <span className="font-medium text-sm">{comment.author_name}</span>
                       <span className="text-xs text-gray-500">
-                        {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true, locale: fr })}
+                        {new Date(comment.created_at).toLocaleDateString()}
                       </span>
                     </div>
                     <p className="text-sm text-gray-700 mt-1">
