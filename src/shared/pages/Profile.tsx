@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Settings, Edit, Loader2 } from 'lucide-react';
-import { usePosts } from '../hooks/usePosts';
-import { Post } from '../types';
-import { PostCard } from '../components/PostCard';
+import { usePosts } from '@/features/posts/hooks/usePosts';
+import { PostCard } from '@/features/posts/components/PostCard';
 
 export function Profile() {
-  const [filter, setFilter] = useState<'recent' | 'popular'>('recent');
+  const filter = 'recent' ;
   
   // Pour la démo, on utilise "Utilisateur"
   const userName = 'Utilisateur';
