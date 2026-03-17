@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { PostCard } from '../components/PostCard';
-import { api } from '../services/api';
+import { api } from '../services/api/postServices';
 import { Post, Category } from '../types';
 import { Loader2 } from 'lucide-react';
+import { PostCard } from '@/features/posts/components/PostCard';
 
 export function CategoryPage() {
   const { category } = useParams<{ category: string }>();

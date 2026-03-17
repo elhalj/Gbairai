@@ -1,14 +1,19 @@
+import React from 'react';
 import { Link } from 'react-router';
 import { Heart, MessageCircle, Eye, Share2 } from 'lucide-react';
-import { Post } from '../types';
-import { Card } from './ui/card';
-import { Badge } from './ui/badge';
+import { usePosts } from '../hooks/usePosts';
+import { toast } from 'sonner';
+import { Post } from '@/shared/types';
+import { Card } from '@/shared/components/ui/card';
+import { Badge } from '@/shared/components/ui/badge';
 
 interface PostCardProps {
   post: Post;
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const { likePost, incrementViews } = usePosts();
+
   const categoryColors: Record<string, string> = {
     sports: 'bg-green-100 text-green-700',
     communauté: 'bg-purple-100 text-purple-700',
@@ -17,6 +22,31 @@ export function PostCard({ post }: PostCardProps) {
     technologie: 'bg-orange-100 text-orange-700',
     actualité: 'bg-gray-100 text-gray-700',
   };
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      await likePost.mutateAsync({ postId: post.id, userId: 'current-user' });
+      toast.success("Article aimé !");
+    } catch (error) {
+      toast.error("Erreur lors du like");
+    }
+  };
+
+  const handleIncrementViews = async () => {
+    try {
+      await incrementViews.mutateAsync(post.id);
+    } catch (error) {
+      console.error("Error incrementing views:", error);
+    }
+  };
+
+  // Incrémenter les vues quand la carte est montée
+  React.useEffect(() => {
+    handleIncrementViews();
+  }, [post.id]);
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -63,7 +93,11 @@ export function PostCard({ post }: PostCardProps) {
 
           {/* Stats */}
           <div className="flex items-center gap-3 sm:gap-4 pt-2 border-t border-gray-100 flex-wrap">
-            <button className="flex items-center gap-1 text-gray-600 hover:text-red-600 transition-colors">
+            <button 
+              className="flex items-center gap-1 text-gray-600 hover:text-red-600 transition-colors"
+              onClick={handleLike}
+              disabled={likePost.isPending}
+            >
               <Heart className="size-4" />
               <span className="text-xs sm:text-sm">{(post.likes).toLocaleString()}</span>
             </button>

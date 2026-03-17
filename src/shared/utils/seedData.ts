@@ -1,5 +1,5 @@
 import { mockPosts } from '../data/mockData';
-import { api } from '../services/api';
+import { api } from '../services/api/postServices';
 
 export async function seedDatabase() {
   console.log('Seeding database with initial posts...');

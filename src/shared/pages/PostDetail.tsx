@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import { api } from '../services/api';
+import { api } from '../services/api/postServices';
 import { Post } from '../types';
 import { Heart, MessageCircle, Eye, Share2, ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';

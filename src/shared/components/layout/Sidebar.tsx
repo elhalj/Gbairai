@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router';
 import { Home, Flame, Newspaper, GraduationCap, Users, Landmark, Laptop } from 'lucide-react';
-import { cn } from './ui/utils';
+import { cn } from '../ui/utils';
 
 const categories = [
   { id: 'home', label: 'Accueil', icon: Home, path: '/' },

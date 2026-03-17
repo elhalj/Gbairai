@@ -1,12 +1,12 @@
 import { createBrowserRouter } from 'react-router';
-import { Layout } from './pages/Layout';
-import { Home } from './pages/Home';
-import { CategoryPage } from './pages/CategoryPage';
-import { PostDetail } from './pages/PostDetail';
-import { CreatePost } from './pages/CreatePost';
-import { Trending } from './pages/Trending';
-import { Profile } from './pages/Profile';
-import { Notifications } from './pages/Notifications';
+import { Layout } from '../shared/pages/Layout';
+import { Home } from '../shared/pages/Home';
+import { CategoryPage } from '../shared/pages/CategoryPage';
+import { PostDetail } from '../shared/pages/PostDetail';
+import { CreatePost } from '../shared/pages/CreatePost';
+import { Trending } from '../shared/pages/Trending';
+import { Profile } from '../shared/pages/Profile';
+import { Notifications } from '../shared/pages/Notifications';
 
 export const router = createBrowserRouter([
   {
