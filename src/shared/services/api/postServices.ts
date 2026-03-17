@@ -1,16 +1,29 @@
-import { Post } from "../types";
-import supabase from "./utils/supabase/info";
+import { Post } from "../../types";
+import supabase from "../database/supabase/info";
 
 
 
 export const api = {
   // Posts
-  async getAllPosts(): Promise<Post[]> {
-    const {data} = await supabase.from("posts").select();
-    return (data || []).map(post => ({
+  async getAllPosts(options: {page: number, limit: number, sort?: 'recent' | 'popular'}): Promise<{posts: Post[], hasMore: boolean}> {
+    let query = supabase.from("posts").select('*', {count: 'exact'});
+    
+    // Apply sorting
+    if (options.sort === 'popular') {
+      query = query.order('likes', {ascending: false});
+    } else {
+      query = query.order('created_at', {ascending: false});
+    }
+    
+    const {data, count} = await query.range((options.page - 1) * options.limit, options.page * options.limit - 1);
+    const posts = (data || []).map(post => ({
       ...post,
       createdAt: post.created_at
     }));
+    return {
+      posts,
+      hasMore: count !== null && count > options.page * options.limit
+    };
   },
 
   async getPost(id: string): Promise<Post | null> {
@@ -63,7 +76,7 @@ export const api = {
     };
   },
 
-  async likePost(postId: string, userId: string): Promise<Post> {
+  async likePost(postId: string, _userId: string): Promise<Post> {
     const {error} = await supabase.rpc('increment_likes', { post_id: postId });
     if (error) throw error;
     

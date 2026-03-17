@@ -2,33 +2,22 @@ import { useState, useEffect } from 'react';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Settings, Edit, Loader2 } from 'lucide-react';
-import { api } from '../services/api';
+import { usePosts } from '../hooks/usePosts';
 import { Post } from '../types';
 import { PostCard } from '../components/PostCard';
 
 export function Profile() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'recent' | 'popular'>('recent');
   
   // Pour la démo, on utilise "Utilisateur"
   const userName = 'Utilisateur';
 
-  useEffect(() => {
-    loadUserPosts();
-  }, []);
+  // Utiliser le hook usePosts pour récupérer tous les posts
+  const { getAllPosts } = usePosts({ page: 1, limit: 100, sort: filter });
 
-  const loadUserPosts = async () => {
-    try {
-      setLoading(true);
-      const allPosts = await api.getAllPosts();
-      // Pour la démo, filtrer par nom d'utilisateur ou afficher tous les posts
-      setPosts(allPosts);
-    } catch (error) {
-      console.error('Error loading user posts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Pour la démo, filtrer par nom d'utilisateur ou afficher tous les posts
+  const posts = getAllPosts.data?.posts || [];
+  const loading = getAllPosts.isLoading;
 
   const totalLikes = posts.reduce((sum, post) => sum + post.likes, 0);
   const totalViews = posts.reduce((sum, post) => sum + post.views, 0);

@@ -14,8 +14,8 @@ import {
 } from "../components/ui/select";
 import { Card } from "../components/ui/card";
 import { Category } from "../types";
-import { api } from "../services/api";
 import { toast } from "sonner";
+import { usePosts } from "@/features/posts/hooks/usePosts";
 
 export function CreatePost() {
     const navigate = useNavigate();
@@ -25,7 +25,9 @@ export function CreatePost() {
     const [category, setCategory] = useState<Category | "">("");
     const [authorName, setAuthorName] = useState("");
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+
+    // Utiliser le hook usePosts pour la mutation de création
+    const { createPost } = usePosts();
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -44,8 +46,7 @@ export function CreatePost() {
         if (!category || !authorName) return;
 
         try {
-            setLoading(true);
-            await api.createPost({
+            await createPost.mutateAsync({
                 title,
                 content,
                 category,
@@ -63,8 +64,6 @@ export function CreatePost() {
         } catch (error) {
             console.error("Error creating post:", error);
             toast.error("Erreur lors de la publication de l'article");
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -219,7 +218,7 @@ export function CreatePost() {
                             <Button
                                 type="button"
                                 variant="outline"
-                                disabled={loading}
+                                disabled={createPost.isPending}
                             >
                                 Annuler
                             </Button>
@@ -232,10 +231,10 @@ export function CreatePost() {
                                 !category ||
                                 !authorName ||
                                 content.length < 100 ||
-                                loading
+                                createPost.isPending
                             }
                         >
-                            {loading ? (
+                            {createPost.isPending ? (
                                 <>
                                     <Loader2 className="size-4 mr-2 animate-spin" />
                                     Publication...

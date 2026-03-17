@@ -1,28 +1,15 @@
 import { useState, useEffect } from 'react';
-import { PostCard } from '../components/PostCard';
-import { api } from '../services/api';
-import { Post } from '../types';
 import { Flame, Loader2 } from 'lucide-react';
+import { usePosts } from '@/features/posts/hooks/usePosts';
+import { PostCard } from '@/features/posts/components/PostCard';
 
 export function Trending() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Utiliser le hook usePosts pour récupérer les posts populaires
+  const { getAllPosts } = usePosts({ page: 1, limit: 50, sort: 'popular' });
 
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const loadPosts = async () => {
-    try {
-      setLoading(true);
-      const data = await api.getAllPosts();
-      setPosts(data);
-    } catch (error) {
-      console.error('Error loading trending posts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Pour la démo, filtrer par nom d'utilisateur ou afficher tous les posts
+  const posts = getAllPosts.data?.posts || [];
+  const loading = getAllPosts.isLoading;
 
   // Trier par likes pour afficher les tendances
   const trendingPosts = [...posts].sort((a, b) => b.likes - a.likes);

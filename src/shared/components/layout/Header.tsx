@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Menu, PlusCircle, Bell, User, Database } from 'lucide-react';
-import { Button } from './ui/button';
-import { seedDatabase } from '../utils/seedData';
 import { toast } from 'sonner';
+import { seedDatabase } from '@/shared/utils/seedData';
+import { Button } from '../ui/button';
 
 interface HeaderProps {
   onMenuClick?: () => void;

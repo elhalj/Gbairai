@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router';
 import { Home, Flame, PlusCircle, Bell, User } from 'lucide-react';
-import { cn } from './ui/utils';
+import { cn } from '../ui/utils';
 
 const navItems = [
   { id: 'home', label: 'Accueil', icon: Home, path: '/' },
