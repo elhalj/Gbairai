@@ -5,8 +5,10 @@ import { CategoryPage } from '../shared/pages/CategoryPage';
 import { PostDetail } from '../shared/pages/PostDetail';
 import { CreatePost } from '../shared/pages/CreatePost';
 import { Trending } from '../shared/pages/Trending';
-import { Profile } from '../shared/pages/Profile';
+import { Profile } from '../features/profile/Profile';
 import { Notifications } from '../shared/pages/Notifications';
+import { Register } from '../shared/pages/Register';
+import { Login } from '../shared/pages/Login';
 
 export const router = createBrowserRouter([
   {
@@ -21,5 +23,13 @@ export const router = createBrowserRouter([
       { path: 'profile', Component: Profile },
       { path: 'notifications', Component: Notifications },
     ],
+  },
+  {
+    path: '/register',
+    Component: Register,
+  },
+  {
+    path: '/login',
+    Component: Login,
   },
 ]);
