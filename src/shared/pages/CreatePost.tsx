@@ -16,18 +16,44 @@ import { Card } from "../components/ui/card";
 import { Category } from "../types";
 import { toast } from "sonner";
 import { usePosts } from "@/features/posts/hooks/usePosts";
+import { useAuth } from "../hooks/useAuth";
+import { decryptData } from "../utils/crypto";
 
 export function CreatePost() {
     const navigate = useNavigate();
+    const { user, isAuthenticated } = useAuth();
+    
+    // Redirect if not authenticated
+    if (!isAuthenticated) {
+        window.location.href = "/login";
+        return null;
+    }
     
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [category, setCategory] = useState<Category | "">("");
-    const [authorName, setAuthorName] = useState("");
+    const [authorName, setAuthorName] = useState(user?.name || user?.pseudo || "");
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    // Récupérer le secretCode de l'utilisateur (cohérent avec Profile)
+    const secretCode = user?.encryptedSecretCode ? decryptData(user.encryptedSecretCode) : '';
+    
+    // Debug logs
+    console.log('isAuthenticated:', isAuthenticated);
+    console.log('user:', user);
+    console.log('secretCode:', secretCode);
 
     // Utiliser le hook usePosts pour la mutation de création
     const { createPost } = usePosts();
+
+    const insertSecretCode = () => {
+        if (secretCode) {
+            setContent(prev => prev + `\n\n[SecretCode: ${secretCode}]`);
+            toast.success('Code secret inséré dans le contenu');
+        } else {
+            toast.error('Code secret non disponible');
+        }
+    };
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -70,7 +96,7 @@ export function CreatePost() {
     return (
         <div className="max-w-4xl mx-auto px-4 py-6">
             {/* Bouton retour */}
-            <Link to="/">
+            <Link to="/profile">
                 <Button variant="ghost" size="sm" className="mb-4">
                     <ArrowLeft className="size-4 mr-2" />
                     Annuler
@@ -160,6 +186,31 @@ export function CreatePost() {
                             Minimum 100 caractères - {content.length}/100
                         </p>
                     </div>
+
+                    {/* Aide SecretCode */}
+                    {isAuthenticated && secretCode && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-blue-800 font-medium">
+                                        🔐 Code secret disponible
+                                    </p>
+                                    <p className="text-xs text-blue-600 mt-1">
+                                        Pour pouvoir vous connecter plus tard, insérez votre code secret dans ce post.
+                                    </p>
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={insertSecretCode}
+                                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                >
+                                    Insérer le code
+                                </Button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Image */}
                     <div className="space-y-2">

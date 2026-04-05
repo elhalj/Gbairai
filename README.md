@@ -63,7 +63,7 @@ Une application web moderne et interactive pour la diffusion d'informations comm
 
     ```bash
     git clone <url-du-repository>
-    cd "Application d'information communautaire"
+    cd "journal - frontend"
     ```
 
 2. **Installer les dépendances**
