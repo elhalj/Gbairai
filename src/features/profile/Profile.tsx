@@ -14,6 +14,7 @@ export function Profile() {
   const filter = 'recent';
   const { isAuthenticated, user } = useAuth()
   console.log(`l'utilisateur: ${JSON.stringify(user)}`)
+  console.log(`user avec post ${user?.posts}`)
   
   // Pour la démo, on utilise "Utilisateur"
   // const userName = 'Utilisateur';
@@ -28,9 +29,16 @@ export function Profile() {
   // Décrypter le code secret de l'utilisateur et filtrer les posts
   const userSecretCode = user?.encryptedSecretCode ? decryptData(user.encryptedSecretCode) : '';
   const postsWithSecretCode = getPostsWithSecretCode(userSecretCode, allPosts);
+  console.log("postes avec secret code", postsWithSecretCode)
 
-  const totalLikes = postsWithSecretCode.reduce((sum, post) => sum + post.likes, 0);
-  const totalViews = postsWithSecretCode.reduce((sum, post) => sum + post.views, 0);
+  // Filtrer les posts de l'utilisateur par son pseudo
+  const userPosts = allPosts.filter(post => 
+    post.author.name === user?.pseudo || post.author.name === user?.name
+  );
+  console.log("posts de l'utilisateur:", userPosts);
+
+  const totalLikes = userPosts.reduce((sum, post) => sum + post.likes, 0);
+  const totalViews = userPosts.reduce((sum, post) => sum + post.views, 0);
 
   if (!isAuthenticated) {
     window.location.href = "/"
@@ -70,15 +78,15 @@ export function Profile() {
             {/* Stats */}
             <div className="flex gap-6 mt-6">
               <div>
-                <div className="text-2xl font-bold text-gray-900">{allPosts && postsWithSecretCode.length}</div>
+                <div className="text-2xl font-bold text-gray-900">{userPosts.length}</div>
                 <div className="text-sm text-gray-600">Articles</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{allPosts && postsWithSecretCode && totalLikes}</div>
+                <div className="text-2xl font-bold text-gray-900">{totalLikes}</div>
                 <div className="text-sm text-gray-600">J'aime</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{allPosts && postsWithSecretCode && totalViews}</div>
+                <div className="text-2xl font-bold text-gray-900">{totalViews}</div>
                 <div className="text-sm text-gray-600">Vues</div>
               </div>
             </div>
@@ -90,7 +98,7 @@ export function Profile() {
       <div className="mb-4">
         <h2 className="text-xl font-bold text-gray-900">Mes articles</h2>
         {!loading && (
-          <p className="text-gray-600 text-sm mt-1">{allPosts && postsWithSecretCode.length} article(s) publié(s)</p>
+          <p className="text-gray-600 text-sm mt-1">{userPosts.length} article(s) publié(s)</p>
         )}
       </div>
 
@@ -98,7 +106,7 @@ export function Profile() {
         <div className="flex items-center justify-center py-12">
           <Loader2 className="size-8 animate-spin text-blue-600" />
         </div>
-      ) : allPosts && postsWithSecretCode.length === 0 ? (
+      ) : userPosts.length === 0 ? (
         <NoArticlesAlert 
           onCreateArticle={() => {
             window.location.href = "/create"
@@ -107,14 +115,14 @@ export function Profile() {
         />
       ) : (
         <div className="space-y-6 mb-8">
-          {allPosts && postsWithSecretCode && postsWithSecretCode.map((post) => (
+          {userPosts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
       )}
 
       {/* Articles contenant le code secret */}
-      {/* <div className="mb-4 mt-8">
+      <div className="mb-4 mt-8">
         <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
           <Search className="size-5" />
           Articles avec votre code secret
@@ -143,7 +151,7 @@ export function Profile() {
         <div className="text-center py-12">
           <p className="text-gray-500">Aucun article ne contient votre code secret</p>
         </div>
-      ) : null} */}
+      ) : null}
     </div>
   );
 }

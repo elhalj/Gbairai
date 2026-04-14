@@ -138,6 +138,7 @@ export function Login() {
                 avatar: avatar,
                 bio: "",
                 postsCount: userPosts.length,
+                posts: userPosts,
                 encryptedSecretCode: formData.secretCode, // Le secretCode n'est pas stocké encrypté pour cette démo
             });
 

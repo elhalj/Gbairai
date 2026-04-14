@@ -1,8 +1,6 @@
-import { useState } from "react";
+
 import { Link } from "react-router";
-import { Menu, PlusCircle, Bell, User, Database } from "lucide-react";
-import { toast } from "sonner";
-import { seedDatabase } from "@/shared/utils/seedData";
+import { Menu, PlusCircle, Bell, User} from "lucide-react";
 import { Button } from "../ui/button";
 import { useAuth } from "@/shared/hooks/useAuth";
 
@@ -12,21 +10,20 @@ interface HeaderProps {
 
 export function Header({ onMenuClick }: HeaderProps) {
     const { user, isAuthenticated, logout } = useAuth();
-    const [seeding, setSeeding] = useState(false);
 
-    const handleSeedData = async () => {
-        setSeeding(true);
-        const success = await seedDatabase();
-        if (success) {
-            toast.success("Données de démo chargées !");
-            // Émettre un événement personnalisé pour notifier le composant Home
-            window.dispatchEvent(new CustomEvent("demoDataLoaded"));
-            setTimeout(() => window.location.reload(), 1000);
-        } else {
-            toast.error("Erreur lors du chargement des données");
-        }
-        setSeeding(false);
-    };
+    // const handleSeedData = async () => {
+    //     setSeeding(true);
+    //     const success = await seedDatabase();
+    //     if (success) {
+    //         toast.success("Données de démo chargées !");
+    //         // Émettre un événement personnalisé pour notifier le composant Home
+    //         window.dispatchEvent(new CustomEvent("demoDataLoaded"));
+    //         setTimeout(() => window.location.reload(), 1000);
+    //     } else {
+    //         toast.error("Erreur lors du chargement des données");
+    //     }
+    //     setSeeding(false);
+    // };
 
     return (
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -54,7 +51,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
                 {/* Actions */}
                 <div className="flex items-center justify-center gap-2">
-                    <Button
+                    {/* <Button
                         variant="outline"
                         size="sm"
                         onClick={handleSeedData}
@@ -63,7 +60,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                     >
                         <Database className="size-4 mr-2" />
                         Données démo
-                    </Button>
+                    </Button> */}
                     <Link to={isAuthenticated ? "/create" : "/login"}>
                         <Button size="sm" className="gap-2">
                             <PlusCircle className="size-4" />
