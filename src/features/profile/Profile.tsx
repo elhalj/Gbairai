@@ -70,15 +70,15 @@ export function Profile() {
             {/* Stats */}
             <div className="flex gap-6 mt-6">
               <div>
-                <div className="text-2xl font-bold text-gray-900">{postsWithSecretCode.length}</div>
+                <div className="text-2xl font-bold text-gray-900">{allPosts && postsWithSecretCode.length}</div>
                 <div className="text-sm text-gray-600">Articles</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{totalLikes}</div>
+                <div className="text-2xl font-bold text-gray-900">{allPosts && postsWithSecretCode && totalLikes}</div>
                 <div className="text-sm text-gray-600">J'aime</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{totalViews}</div>
+                <div className="text-2xl font-bold text-gray-900">{allPosts && postsWithSecretCode && totalViews}</div>
                 <div className="text-sm text-gray-600">Vues</div>
               </div>
             </div>
@@ -90,7 +90,7 @@ export function Profile() {
       <div className="mb-4">
         <h2 className="text-xl font-bold text-gray-900">Mes articles</h2>
         {!loading && (
-          <p className="text-gray-600 text-sm mt-1">{postsWithSecretCode.length} article(s) publié(s)</p>
+          <p className="text-gray-600 text-sm mt-1">{allPosts && postsWithSecretCode.length} article(s) publié(s)</p>
         )}
       </div>
 
@@ -98,7 +98,7 @@ export function Profile() {
         <div className="flex items-center justify-center py-12">
           <Loader2 className="size-8 animate-spin text-blue-600" />
         </div>
-      ) : postsWithSecretCode.length === 0 ? (
+      ) : allPosts && postsWithSecretCode.length === 0 ? (
         <NoArticlesAlert 
           onCreateArticle={() => {
             window.location.href = "/create"
@@ -107,7 +107,7 @@ export function Profile() {
         />
       ) : (
         <div className="space-y-6 mb-8">
-          {postsWithSecretCode.map((post) => (
+          {allPosts && postsWithSecretCode && postsWithSecretCode.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
