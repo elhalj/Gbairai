@@ -31,10 +31,26 @@ export function Profile() {
   const postsWithSecretCode = getPostsWithSecretCode(userSecretCode, allPosts);
   console.log("postes avec secret code", postsWithSecretCode)
 
-  // Filtrer les posts de l'utilisateur par son pseudo
-  const userPosts = allPosts.filter(post => 
-    post.author.name === user?.pseudo || post.author.name === user?.name
-  );
+  // Filtrer les posts de l'utilisateur en privilégiant un identifiant stable (id),
+  // puis en retombant sur le nom/pseudo de façon robuste (null-check + insensible à la casse)
+  const userPosts = allPosts.filter(post => {
+    const author = post.author;
+    if (!author) return false;
+
+    // Si un id stable existe des deux côtés, l'utiliser en priorité
+    if (user?.id && (author as any).id) {
+      return (author as any).id === user.id;
+    }
+
+    const authorName = author.name?.toLowerCase();
+    const userPseudo = user?.pseudo?.toLowerCase();
+    const userName = user?.name?.toLowerCase();
+
+    if (!authorName) return false;
+
+    return (userPseudo && authorName === userPseudo) ||
+           (userName && authorName === userName);
+  });
   console.log("posts de l'utilisateur:", userPosts);
 
   const totalLikes = userPosts.reduce((sum, post) => sum + post.likes, 0);
